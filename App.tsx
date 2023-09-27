@@ -1,42 +1,73 @@
-import { Text, View, StyleSheet, Button, ScrollView,TextInput,SafeAreaView } from 'react-native';
-import React from 'react';
+import { Text, View, StyleSheet, Button, ScrollView, TextInput, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
 
 export default function App() {
-  const [altura,setAltura] = React.useState('')
-  const [massa,setMassa] = React.useState('')
+  const [altura, setAltura] = useState('');
+  const [massa, setMassa] = useState('');
+  const [resultado, setResultado] = useState(null);
 
-  function handleOnchangeAltura(texto: string){
-    setAltura(texto)
-  } 
+  function handleOnChangeAltura(texto: string) {
+    setAltura(texto);
+  }
 
-  function handleOnchangeMassa(texto: string){
-    setMassa(texto)
-  } 
+  function handleOnChangeMassa(texto: string) {
+    setMassa(texto);
+  }
+
+  function calcularIMC() {
+    const alturaEmMetros = parseFloat(altura) / 100; // Converter altura de cm para m
+    const imc = (parseFloat(massa) / (alturaEmMetros * alturaEmMetros)).toFixed(2);
+
+    if (!isNaN(imc)) {
+      setResultado(`Seu IMC é: ${imc}`);
+    } else {
+      setResultado('Por favor, insira valores válidos para altura e massa.');
+    }
+  }
+
+  function resetarCalculo() {
+    setAltura('');
+    setMassa('');
+    setResultado(null);
+  }
+
   return (
-    <View style={style.container} >
-      <TextInput style={style.inputs} placeholder='Altura' onChangeText={handleOnchangeAltura} keyboardType='numeric' />
-      <TextInput style={style.inputs} placeholder='Massa' onChangeText={handleOnchangeMassa} keyboardType='numeric' />
-      <Button title='Calcular'/>
-      <Text style={{textAlign:"center",margin:10,}}>{`Altura:${altura}`}</Text>
-      <Text style={{textAlign:"center",margin:10,}}>{`Massa:${massa}`}</Text>
+    <View style={style.container}>
+      <TextInput
+        style={style.inputs}
+        placeholder='Altura (cm)'
+        onChangeText={handleOnChangeAltura}
+        keyboardType='numeric'
+        value={altura}
+      />
+      <TextInput
+        style={style.inputs}
+        placeholder='Massa (kg)'
+        onChangeText={handleOnChangeMassa}
+        keyboardType='numeric'
+        value={massa}
+      />
+      <Button title='Calcular' onPress={calcularIMC} />
+      {resultado && <Text style={{ textAlign: "center", margin: 10 }}>{resultado}</Text>}
+      <Button title='Recalcular' onPress={resetarCalculo} />
     </View>
   );
 }
 
 const style = StyleSheet.create({
-    container:{
-      flex:1, // definindo o espaço para toda tela
-      justifyContent:"center", /// todos que estão na horizontal está no centro
-      margin:10, //se descolar 10px para cada lado
-    },
-    inputs:{
-      height: 40, // altura de 40 cm
-      borderColor: 'gray', // borda cinza
-      borderWidth: 1, //borda de altura
-      marginBottom: 10, //se desloca 10px para cima
-      paddingLeft: 10,// cria uma area de 10px na sua esquerda
-    },
-    button:{
-      backgroundColor:"#9ACD32"
-    },
-})
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    margin: 10,
+  },
+  inputs: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingLeft: 10,
+  },
+  button: {
+    backgroundColor: "#9ACD32",
+  },
+});
